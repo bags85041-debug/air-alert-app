@@ -8,9 +8,15 @@ from matplotlib import font_manager
 from ai_helper import ask_ai
 from air_api import get_sido, get_station
 
-FONT_PATH = Path(__file__).parent / "fonts" / "NanumGothic-Regular.ttf"
-font_manager.fontManager.addfont(str(FONT_PATH))
-plt.rcParams["font.family"] = font_manager.FontProperties(fname=str(FONT_PATH)).get_name()
+FONT_CANDIDATES = [
+    Path(__file__).parent / "fonts" / "NanumGothic-Regular.ttf",  # 로컬 폴더 구조
+    Path(__file__).parent / "NanumGothic-Regular.ttf",            # GitHub 저장소 루트
+]
+FONT_PATH = next((p for p in FONT_CANDIDATES if p.exists()), FONT_CANDIDATES[0])
+if FONT_PATH.exists():
+    font_manager.fontManager.addfont(str(FONT_PATH))
+    plt.rcParams["font.family"] = font_manager.FontProperties(fname=str(FONT_PATH)).get_name()
+# 폰트 파일이 없어도(예: 배포 저장소에 fonts/ 미포함) 앱이 죽지 않도록 기본 폰트로 진행
 plt.rcParams["axes.unicode_minus"] = False
 
 SIDO_LIST = [
